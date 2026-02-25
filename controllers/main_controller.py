@@ -1,18 +1,35 @@
+
 from PyQt5.QtWidgets import QFileDialog
-from PyQt5.QtGui import QImage, QPixmap
+from PyQt5.QtGui import QImage, QPixmap, QCursor
+from PyQt5.QtCore import Qt, QEvent, QObject
 import cv2
 from core.image_manager import ImageManager
 
 #btn_load, btn_reset, lbl_img
 
-class MainController:
+class MainController(QObject):
     def __init__(self, window):
+        super().__init__()
         self.window = window
         self.manager = ImageManager()
 
         # connect buttons
-        self.window.btn_load.clicked.connect(self.load_image)
         self.window.btn_reset.clicked.connect(self.reset_image)
+        
+        # make InputImage label clickable (double-click)
+        self.window.InputImage.setCursor(QCursor(Qt.PointingHandCursor))
+        self.window.InputImage.installEventFilter(self)
+        self.window.InputImage.setStyleSheet("QLabel { border: 2px dashed #aaa; background-color: #f5f5f5; }")
+        self.window.InputImage.setScaledContents(False)
+        self.window.InputImage.setAlignment(Qt.AlignCenter)
+
+    def eventFilter(self, obj, event):
+        # Check if the event is a double-click on the InputImage label
+        if obj == self.window.InputImage and event.type() == QEvent.MouseButtonDblClick:
+            if event.button() == Qt.LeftButton:
+                self.load_image()
+                return True
+        return False
 
     def load_image(self):
         path, _ = QFileDialog.getOpenFileName(
@@ -45,5 +62,11 @@ class MainController:
             QImage.Format_RGB888
         )
 
-        self.window.lbl_img.setPixmap(QPixmap.fromImage(qimg))
-        self.window.lbl_img.setScaledContents(True)
+        pixmap = QPixmap.fromImage(qimg)
+        # Scale pixmap to fit label size while keeping aspect ratio
+        scaled_pixmap = pixmap.scaled(
+            self.window.InputImage.size(),
+            Qt.KeepAspectRatio,
+            Qt.SmoothTransformation
+        )
+        self.window.InputImage.setPixmap(scaled_pixmap)
