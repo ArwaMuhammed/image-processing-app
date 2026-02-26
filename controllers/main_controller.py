@@ -6,6 +6,7 @@ import cv2
 from core.image_manager import ImageManager
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from core.histogram import Histogram
+from core.edges import sobel_edge_detection, prewitt_edge_detection, roberts_edge_detection, canny_edge_detection
 
 
 
@@ -31,6 +32,12 @@ class MainController(QObject):
         self.window.GrayImage.setStyleSheet("QLabel { border: 2px solid #aaa; background-color: #f5f5f5; }")
         self.window.GrayImage.setScaledContents(False)
         self.window.GrayImage.setAlignment(Qt.AlignCenter)
+
+        # Setup Edge Detection tab
+        self.setup_edge_detection_tab()
+        
+        # Connect tab change to update edge input image
+        self.window.tabWidget.currentChanged.connect(self.on_tab_changed)
 
     def eventFilter(self, obj, event):
         # Check if the event is a double-click on the InputImage label
@@ -175,3 +182,61 @@ class MainController(QObject):
                 item = widget.layout().takeAt(0)
                 if item.widget():
                     item.widget().deleteLater()
+
+    # ══════════════════ EDGE DETECTION ══════════════════
+    
+    def setup_edge_detection_tab(self):
+        """Setup edge detection tab with combo box and labels"""
+        # Setup edge input image label
+        self.window.edge_input_image.setStyleSheet("QLabel { border: 2px solid #aaa; background-color: #f5f5f5; }")
+        self.window.edge_input_image.setScaledContents(False)
+        self.window.edge_input_image.setAlignment(Qt.AlignCenter)
+        
+        # Setup edge output image label
+        self.window.edge_output_image.setStyleSheet("QLabel { border: 2px solid #aaa; background-color: #f5f5f5; }")
+        self.window.edge_output_image.setScaledContents(False)
+        self.window.edge_output_image.setAlignment(Qt.AlignCenter)
+        
+        # Populate combo box with edge detection options
+        self.window.edge_combo.addItems(["Select Mask", "Sobel", "Prewitt", "Roberts", "Canny"])
+        
+        # Connect combo box signal
+        self.window.edge_combo.currentIndexChanged.connect(self.apply_edge_detection)
+
+    def on_tab_changed(self, index):
+        """Handle tab change - display input image in Edge tab when switching to it"""
+        # Edge Detection tab is index 2 (tab_3)
+        if index == 2 and self.manager.original_image is not None:
+            self.display_image(self.manager.original_image, self.window.edge_input_image)
+
+
+    def apply_edge_detection(self, index):
+        """Apply selected edge detection mask"""
+        # Use image from ImageManager (loaded in Input tab)
+        if self.manager.original_image is None:
+            return
+        
+        # Get selection
+        selection = self.window.edge_combo.currentText()
+        
+        if selection == "Select Mask":
+            self.window.edge_output_image.clear()
+            return
+        
+        # Use grayscale image from manager
+        gray = self.manager.gray_image
+        
+        # Apply selected edge detection
+        if selection == "Sobel":
+            edges = sobel_edge_detection(gray)
+        elif selection == "Prewitt":
+            edges = prewitt_edge_detection(gray)
+        elif selection == "Roberts":
+            edges = roberts_edge_detection(gray)
+        elif selection == "Canny":
+            edges = canny_edge_detection(gray)
+        else:
+            return
+        
+        # Display result
+        self.display_gray_image(edges, self.window.edge_output_image)

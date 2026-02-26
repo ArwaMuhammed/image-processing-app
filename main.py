@@ -14,5 +14,8 @@ if __name__ == "__main__":
     controller = MainController(window)
     hybrid_controller = HybridController(window) 
 
+    # Set default tab to Input tab (index 0)
+    window.tabWidget.setCurrentIndex(0)
+
     window.show()
     sys.exit(app.exec_())

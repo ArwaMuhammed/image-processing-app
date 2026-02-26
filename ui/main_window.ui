@@ -174,6 +174,96 @@
           <attribute name="title">
            <string>Edge detection</string>
           </attribute>
+          <layout class="QVBoxLayout" name="edge_mainLayout">
+           <item>
+            <layout class="QHBoxLayout" name="edge_controlsLayout">
+             <item>
+              <widget class="QLabel" name="edge_label">
+               <property name="text">
+                <string>Select Edge Mask:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QComboBox" name="edge_combo">
+               <property name="minimumSize">
+                <size>
+                 <width>150</width>
+                 <height>0</height>
+                </size>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="edge_spacer">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="edge_imageLayout">
+             <item>
+              <widget class="QGroupBox" name="edge_input_group">
+               <property name="title">
+                <string>Input Image</string>
+               </property>
+               <layout class="QVBoxLayout" name="edge_input_layout">
+                <item>
+                 <widget class="QLabel" name="edge_input_image">
+                  <property name="minimumSize">
+                   <size>
+                    <width>400</width>
+                    <height>400</height>
+                   </size>
+                  </property>
+                  <property name="text">
+                   <string>Double-click to load image</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignCenter</set>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item>
+              <widget class="QGroupBox" name="edge_output_group">
+               <property name="title">
+                <string>Edge Detection Result</string>
+               </property>
+               <layout class="QVBoxLayout" name="edge_output_layout">
+                <item>
+                 <widget class="QLabel" name="edge_output_image">
+                  <property name="minimumSize">
+                   <size>
+                    <width>400</width>
+                    <height>400</height>
+                   </size>
+                  </property>
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignCenter</set>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
          </widget>
 
          <!-- ═══════════════ TAB 4: Normalization ═══════════════ -->
