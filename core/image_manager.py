@@ -21,4 +21,11 @@ class ImageManager:
     def reset_image(self):
         if self.original_image is not None:
             self.current_image = self.original_image.copy()
+            self.gray_image = None
             return self.current_image
+        
+    def convertToGray(self, img):
+        """Convert image to grayscale and store it"""
+        self.gray_image = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        return self.gray_image
+            
