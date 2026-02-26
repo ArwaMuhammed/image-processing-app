@@ -21,8 +21,10 @@
        <item>
         <widget class="QTabWidget" name="tabWidget">
          <property name="currentIndex">
-          <number>0</number>
+          <number>5</number>
          </property>
+
+         <!-- ═══════════════ TAB 1: Input + Histogram ═══════════════ -->
          <widget class="QWidget" name="tab">
           <attribute name="title">
            <string>Input + Histogram</string>
@@ -159,31 +161,412 @@
            </item>
           </layout>
          </widget>
+
+         <!-- ═══════════════ TAB 2: Noise ═══════════════ -->
          <widget class="QWidget" name="tab_2">
           <attribute name="title">
            <string>Noise</string>
           </attribute>
          </widget>
+
+         <!-- ═══════════════ TAB 3: Edge detection ═══════════════ -->
          <widget class="QWidget" name="tab_3">
           <attribute name="title">
            <string>Edge detection</string>
           </attribute>
          </widget>
+
+         <!-- ═══════════════ TAB 4: Normalization ═══════════════ -->
          <widget class="QWidget" name="tab_5">
           <attribute name="title">
            <string>Normalization</string>
           </attribute>
          </widget>
+
+         <!-- ═══════════════ TAB 5: Equalization ═══════════════ -->
          <widget class="QWidget" name="tab_6">
           <attribute name="title">
            <string>Equalization</string>
           </attribute>
          </widget>
+
+         <!-- ═══════════════ TAB 6: Hybrid Images ═══════════════ -->
          <widget class="QWidget" name="tab_4">
           <attribute name="title">
            <string>Hybrid Images</string>
           </attribute>
+
+          <layout class="QVBoxLayout" name="hybrid_mainLayout">
+
+           <!-- ── ROW 1: Two input image boxes side by side ── -->
+           <item>
+            <layout class="QHBoxLayout" name="hybrid_inputImagesLayout">
+
+             <!-- Image 1 box -->
+             <item>
+              <widget class="QGroupBox" name="hybrid_groupBox_img1">
+               <property name="title">
+                <string>Image 1  (double-click to load)</string>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>220</height>
+                </size>
+               </property>
+               <layout class="QVBoxLayout" name="hybrid_img1Layout">
+                <item>
+                 <widget class="QLabel" name="hybrid_label_img1">
+                  <property name="text">
+                   <string>Double-click to load image</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignCenter</set>
+                  </property>
+                  <property name="scaledContents">
+                   <bool>false</bool>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+
+             <!-- Image 2 box -->
+             <item>
+              <widget class="QGroupBox" name="hybrid_groupBox_img2">
+               <property name="title">
+                <string>Image 2  (double-click to load)</string>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>220</height>
+                </size>
+               </property>
+               <layout class="QVBoxLayout" name="hybrid_img2Layout">
+                <item>
+                 <widget class="QLabel" name="hybrid_label_img2">
+                  <property name="text">
+                   <string>Double-click to load image</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignCenter</set>
+                  </property>
+                  <property name="scaledContents">
+                   <bool>false</bool>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+
+            </layout>
+           </item>
+
+           <!-- ── ROW 2: Controls (sliders) ── -->
+           <item>
+            <widget class="QGroupBox" name="hybrid_groupBox_controls">
+             <property name="title">
+              <string>Controls</string>
+             </property>
+             <layout class="QVBoxLayout" name="hybrid_controlsLayout">
+
+              <!-- Low Cutoff row -->
+              <item>
+               <layout class="QHBoxLayout" name="hybrid_lowCutoffRow">
+                <item>
+                 <widget class="QLabel" name="hybrid_lbl_low">
+                  <property name="text">
+                   <string>Low Cutoff (Image 1 LPF):</string>
+                  </property>
+                  <property name="minimumSize">
+                   <size>
+                    <width>170</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QSlider" name="hybrid_slider_low_cutoff">
+                  <property name="minimum">
+                   <number>1</number>
+                  </property>
+                  <property name="maximum">
+                   <number>100</number>
+                  </property>
+                  <property name="value">
+                   <number>30</number>
+                  </property>
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="hybrid_label_low_val">
+                  <property name="text">
+                   <string>30</string>
+                  </property>
+                  <property name="minimumSize">
+                   <size>
+                    <width>35</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignCenter</set>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+
+              <!-- High Cutoff row -->
+              <item>
+               <layout class="QHBoxLayout" name="hybrid_highCutoffRow">
+                <item>
+                 <widget class="QLabel" name="hybrid_lbl_high">
+                  <property name="text">
+                   <string>High Cutoff (Image 2 HPF):</string>
+                  </property>
+                  <property name="minimumSize">
+                   <size>
+                    <width>170</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget name="hybrid_slider_high_cutoff" class="QSlider">
+                  <property name="minimum">
+                   <number>1</number>
+                  </property>
+                  <property name="maximum">
+                   <number>100</number>
+                  </property>
+                  <property name="value">
+                   <number>20</number>
+                  </property>
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="hybrid_label_high_val">
+                  <property name="text">
+                   <string>20</string>
+                  </property>
+                  <property name="minimumSize">
+                   <size>
+                    <width>35</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignCenter</set>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+
+              <!-- Alpha row -->
+              <item>
+               <layout class="QHBoxLayout" name="hybrid_alphaRow">
+                <item>
+                 <widget class="QLabel" name="hybrid_lbl_alpha">
+                  <property name="text">
+                   <string>Alpha (blend weight):</string>
+                  </property>
+                  <property name="minimumSize">
+                   <size>
+                    <width>170</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget name="hybrid_slider_alpha" class="QSlider">
+                  <property name="minimum">
+                   <number>0</number>
+                  </property>
+                  <property name="maximum">
+                   <number>100</number>
+                  </property>
+                  <property name="value">
+                   <number>50</number>
+                  </property>
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="hybrid_label_alpha_val">
+                  <property name="text">
+                   <string>0.50</string>
+                  </property>
+                  <property name="minimumSize">
+                   <size>
+                    <width>35</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignCenter</set>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+
+              <!-- Create Hybrid button centred -->
+              <item>
+               <layout class="QHBoxLayout" name="hybrid_btnRow">
+                <item>
+                 <spacer name="hybrid_spacer_left">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="hybrid_btn_create">
+                  <property name="text">
+                   <string>Create Hybrid Image</string>
+                  </property>
+                  <property name="minimumSize">
+                   <size>
+                    <width>160</width>
+                    <height>30</height>
+                   </size>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="hybrid_spacer_right">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+               </layout>
+              </item>
+
+             </layout>
+            </widget>
+           </item>
+
+           <!-- ── ROW 3: Three output boxes ── -->
+           <item>
+            <layout class="QHBoxLayout" name="hybrid_outputLayout">
+
+             <!-- Low Pass result -->
+             <item>
+              <widget class="QGroupBox" name="hybrid_groupBox_low">
+               <property name="title">
+                <string>Low Pass  (Image 1)</string>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>200</height>
+                </size>
+               </property>
+               <layout class="QVBoxLayout" name="hybrid_lowLayout">
+                <item>
+                 <widget class="QLabel" name="hybrid_label_low_result">
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignCenter</set>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+
+             <!-- High Pass result -->
+             <item>
+              <widget class="QGroupBox" name="hybrid_groupBox_high">
+               <property name="title">
+                <string>High Pass  (Image 2)</string>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>200</height>
+                </size>
+               </property>
+               <layout class="QVBoxLayout" name="hybrid_highLayout">
+                <item>
+                 <widget class="QLabel" name="hybrid_label_high_result">
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignCenter</set>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+
+             <!-- Hybrid result -->
+             <item>
+              <widget class="QGroupBox" name="hybrid_groupBox_hybrid">
+               <property name="title">
+                <string>Hybrid Result</string>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>200</height>
+                </size>
+               </property>
+               <layout class="QVBoxLayout" name="hybrid_hybridLayout">
+                <item>
+                 <widget class="QLabel" name="hybrid_label_hybrid_result">
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignCenter</set>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+
+            </layout>
+           </item>
+
+          </layout>
          </widget>
+         <!-- ═══ END Hybrid Images tab ═══ -->
+
         </widget>
        </item>
       </layout>
