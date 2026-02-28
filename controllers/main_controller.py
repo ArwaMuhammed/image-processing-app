@@ -1,4 +1,3 @@
-
 from PyQt5.QtWidgets import QFileDialog, QVBoxLayout
 from PyQt5.QtGui import QImage, QPixmap, QCursor
 from PyQt5.QtCore import Qt, QEvent, QObject
@@ -9,182 +8,127 @@ from core.histogram import Histogram
 from core.edges import sobel_edge_detection, prewitt_edge_detection, roberts_edge_detection, canny_edge_detection
 
 
-
-#btn_load, btn_reset, lbl_img
-
 class MainController(QObject):
     def __init__(self, window):
         super().__init__()
         self.window = window
         self.manager = ImageManager()
+        self.equalization_image = None
 
-        # connect buttons
+        # Input tab
         self.window.btn_reset.clicked.connect(self.reset_image)
-        
-        # make InputImage label clickable (double-click)
-        self.window.InputImage.setCursor(QCursor(Qt.PointingHandCursor))
-        self.window.InputImage.installEventFilter(self)
-        self.window.InputImage.setStyleSheet("QLabel { border: 2px dashed #aaa; background-color: #f5f5f5; }")
-        self.window.InputImage.setScaledContents(False)
-        self.window.InputImage.setAlignment(Qt.AlignCenter)
-        
-        # Setup gray image label
-        self.window.GrayImage.setStyleSheet("QLabel { border: 2px solid #aaa; background-color: #f5f5f5; }")
-        self.window.GrayImage.setScaledContents(False)
-        self.window.GrayImage.setAlignment(Qt.AlignCenter)
+        self.window.btn_convert_gray.clicked.connect(self.convert_to_gray)
+        self._setup_label(self.window.InputImage, dashed=True, clickable=True)
 
-        # Setup Edge Detection tab
+        # Edge detection tab
         self.setup_edge_detection_tab()
-        
-        # Connect tab change to update edge input image
+
+        # Equalization tab
+        self._setup_label(self.window.equalization_input_image, dashed=True, clickable=True)
+        self._setup_label(self.window.equalization_output_image)
+        self.window.equalization_btn_apply.clicked.connect(self.apply_equalization)
+
         self.window.tabWidget.currentChanged.connect(self.on_tab_changed)
 
-    def eventFilter(self, obj, event):
-        # Check if the event is a double-click on the InputImage label
-        if obj == self.window.InputImage and event.type() == QEvent.MouseButtonDblClick:
-            if event.button() == Qt.LeftButton:
-                self.load_image()
-                return True
-        return False
+    # ── Helpers ────────────────────────────────────────────────
 
-    def load_image(self):
-        path, _ = QFileDialog.getOpenFileName(
-            self.window,
-            "Select Image",
-            "",
-            "Images (*.png *.jpg *.bmp)"
-        )
+    def _setup_label(self, label, dashed=False, clickable=False):
+        border = "2px dashed #aaa" if dashed else "2px solid #aaa"
+        label.setStyleSheet(f"QLabel {{ border: {border}; background-color: #f5f5f5; }}")
+        label.setScaledContents(False)
+        label.setAlignment(Qt.AlignCenter)
+        if clickable:
+            label.setCursor(QCursor(Qt.PointingHandCursor))
+            label.installEventFilter(self)
 
-        if path:
-            img = self.manager.read_image(path)
-            # Convert to gray (automatically stored in manager)
-            gray_img = self.manager.convertToGray(img)
-
-            # Display both images
-            self.display_image(img, self.window.InputImage)
-            self.display_gray_image(gray_img, self.window.GrayImage)
-        
-            # Display histograms
-            self.display_histograms()
-
-            self.display_CDF()
-
-#________________________________________________________________________
-        
-    def reset_image(self):
-        img = self.manager.reset_image()
-        if img is not None:
-            self.display_image(img, self.window.InputImage)
-            # Clear gray image and histograms
-            self.window.GrayImage.clear()
-            self.clear_widget_layout(self.window.InputHistogram)
-            self.clear_widget_layout(self.window.GrayHistogram)
-            self.clear_widget_layout(self.window.InputDistribution)
-            self.clear_widget_layout(self.window.GrayDistribution)
-
-    def display_image(self, image, label):
-        image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-
-        h, w, ch = image_rgb.shape
-        bytes_per_line = ch * w
-
-        qimg = QImage(
-            image_rgb.data,
-            w,
-            h,
-            bytes_per_line,
-            QImage.Format_RGB888
-        )
-
-        pixmap = QPixmap.fromImage(qimg)
-        # Scale pixmap to fit label size while keeping aspect ratio
-        scaled_pixmap = pixmap.scaled(
-            label.size(),
-            Qt.KeepAspectRatio,
-            Qt.SmoothTransformation
-        )
-        label.setPixmap(scaled_pixmap)
-
-    def display_gray_image(self, gray_image, label):
-        h, w = gray_image.shape
-        bytes_per_line = w
-
-        qimg = QImage(
-            gray_image.data,
-            w,
-            h,
-            bytes_per_line,
-            QImage.Format_Grayscale8
-        )
-
-        pixmap = QPixmap.fromImage(qimg)
-        # Scale pixmap to fit label size while keeping aspect ratio
-        scaled_pixmap = pixmap.scaled(
-            label.size(),
-            Qt.KeepAspectRatio,
-            Qt.SmoothTransformation
-        )
-        label.setPixmap(scaled_pixmap)
-
-
-
-    def display_histograms(self):
-        if self.manager.original_image is not None:
-            # Calculate histograms
-            histB, histG, histR = Histogram.computeHistoColored(self.manager.original_image)
-            gray_hist = Histogram.computeHistoGray(self.manager.gray_image)
-            
-            # Get matplotlib figures
-            color_fig = Histogram.plot_colored_histogram(histB, histG, histR)
-            gray_fig = Histogram.plot_gray_histogram(gray_hist)
-            
-            # Display plots
-            self.add_plot_to_widget(color_fig, self.window.InputHistogram)
-            self.add_plot_to_widget(gray_fig, self.window.GrayHistogram)
-
-    def display_CDF(self):
-        if self.manager.original_image is not None:
-            # Calculate histograms
-            histB, histG, histR = Histogram.computeHistoColored(self.manager.original_image)
-            gray_hist = Histogram.computeHistoGray(self.manager.gray_image)
-            
-            # Calculate CDFs
-            cdfB, cdfG, cdfR = Histogram.compute_cdf_colored(histB, histG, histR)
-            cdf_gray = Histogram.compute_cdf_gray(gray_hist)
-            
-            # Get matplotlib figures for CDFs
-            cdf_color_fig = Histogram.plot_cdf_colored(cdfB, cdfG, cdfR)
-            cdf_gray_fig = Histogram.plot_cdf_gray(cdf_gray)
-            
-            # Display plots
-            self.add_plot_to_widget(cdf_color_fig, self.window.InputDistribution)
-            self.add_plot_to_widget(cdf_gray_fig, self.window.GrayDistribution)
-
-    def add_plot_to_widget(self, figure, widget):
-        """Helper method to add matplotlib figure to a widget container"""
-        # Clear existing widgets
-        self.clear_widget_layout(widget)
-        
-        # Create canvas from figure
-        canvas = FigureCanvas(figure)
-        
-        # Create layout if needed and add canvas
+    def _set_canvas(self, widget, figures):
+        """Clear widget layout and populate with one or more FigureCanvas items."""
+        self._clear_layout(widget)
         if not widget.layout():
             QVBoxLayout(widget)
-        widget.layout().addWidget(canvas)
+        for fig in figures:
+            widget.layout().addWidget(FigureCanvas(fig))
 
-
-
-    def clear_widget_layout(self, widget):
-        """Remove all widgets from a widget's layout"""
-        if widget.layout() is not None:
+    def _clear_layout(self, widget):
+        if widget.layout():
             while widget.layout().count():
                 item = widget.layout().takeAt(0)
                 if item.widget():
                     item.widget().deleteLater()
 
-    # ══════════════════ EDGE DETECTION ══════════════════
-    
+    def display_image(self, image, label):
+        image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        h, w, ch = image_rgb.shape
+        qimg = QImage(image_rgb.data, w, h, ch * w, QImage.Format_RGB888)
+        label.setPixmap(QPixmap.fromImage(qimg).scaled(label.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation))
+
+    def display_gray_image(self, gray_image, label):
+        h, w = gray_image.shape
+        qimg = QImage(gray_image.data, w, h, w, QImage.Format_Grayscale8)
+        label.setPixmap(QPixmap.fromImage(qimg).scaled(label.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation))
+
+    # ── Histogram helpers ──────────────────────────────────────
+
+    def _show_rgb_histograms(self, image):
+        histB, histG, histR = Histogram.computeHistoColored(image)
+        cdfB, cdfG, cdfR   = Histogram.compute_cdf_colored(histB, histG, histR)
+        self._set_canvas(self.window.InputHistogram, [
+            Histogram.plot_colored_histogram(histB, histG, histR, True, False, False),
+            Histogram.plot_colored_histogram(histB, histG, histR, False, True, False),
+            Histogram.plot_colored_histogram(histB, histG, histR, False, False, True),
+        ])
+        self._set_canvas(self.window.InputDistribution, [
+            Histogram.plot_cdf_colored(cdfB, cdfG, cdfR, True, False, False),
+            Histogram.plot_cdf_colored(cdfB, cdfG, cdfR, False, True, False),
+            Histogram.plot_cdf_colored(cdfB, cdfG, cdfR, False, False, True),
+        ])
+
+    def _show_gray_histograms(self, gray_image):
+        hist = Histogram.computeHistoGray(gray_image)
+        cdf  = Histogram.compute_cdf_gray(hist)
+        self._set_canvas(self.window.InputHistogram,    [Histogram.plot_gray_histogram(hist)])
+        self._set_canvas(self.window.InputDistribution, [Histogram.plot_cdf_gray(cdf)])
+
+    def _show_equalization_input_histogram(self, gray_image):
+        hist = Histogram.computeHistoGray(gray_image)
+        self._set_canvas(self.window.equalization_input_histogram, [Histogram.plot_gray_histogram(hist)])
+
+    # ── Event filter ───────────────────────────────────────────
+
+    def eventFilter(self, obj, event):
+        if event.type() == QEvent.MouseButtonDblClick and event.button() == Qt.LeftButton:
+            if obj == self.window.InputImage:
+                self.load_image(); return True
+            if obj == self.window.equalization_input_image:
+                self.load_equalization_image(); return True
+        return False
+
+    # ── Input tab ─────────────────────────────────────────────
+
+    def load_image(self):
+        path, _ = QFileDialog.getOpenFileName(self.window, "Select Image", "", "Images (*.png *.jpg *.bmp)")
+        if not path:
+            return
+        self.manager.read_image(path)
+        self.display_image(self.manager.current_image, self.window.InputImage)
+        self._show_rgb_histograms(self.manager.original_image)
+
+    def reset_image(self):
+        img = self.manager.reset_image()
+        if img is not None:
+            self.display_image(img, self.window.InputImage)
+            self._show_rgb_histograms(self.manager.original_image)
+
+    def convert_to_gray(self):
+        if self.manager.gray_image is None:
+            return
+        gray_bgr = cv2.cvtColor(self.manager.gray_image, cv2.COLOR_GRAY2BGR)
+        self.manager.current_image = gray_bgr
+        self.display_image(gray_bgr, self.window.InputImage)
+        self._show_gray_histograms(self.manager.gray_image)
+
+    # ── Edge detection tab ────────────────────────────────────
+
     def setup_edge_detection_tab(self):
         """Setup edge detection tab with combo box and labels"""
         # Setup edge input image label
@@ -203,30 +147,19 @@ class MainController(QObject):
         # Connect combo box signal
         self.window.edge_combo.currentIndexChanged.connect(self.apply_edge_detection)
 
-    def on_tab_changed(self, index):
-        """Handle tab change - display input image in Edge tab when switching to it"""
-        # Edge Detection tab is index 2 (tab_3)
-        if index == 2 and self.manager.original_image is not None:
-            self.display_image(self.manager.original_image, self.window.edge_input_image)
-
-
     def apply_edge_detection(self, index):
         """Apply selected edge detection mask"""
-        # Use image from ImageManager (loaded in Input tab)
         if self.manager.original_image is None:
             return
         
-        # Get selection
         selection = self.window.edge_combo.currentText()
         
         if selection == "Select Mask":
             self.window.edge_output_image.clear()
             return
         
-        # Use grayscale image from manager
         gray = self.manager.gray_image
         
-        # Apply selected edge detection
         if selection == "Sobel":
             edges = sobel_edge_detection(gray)
         elif selection == "Prewitt":
@@ -238,5 +171,37 @@ class MainController(QObject):
         else:
             return
         
-        # Display result
         self.display_gray_image(edges, self.window.edge_output_image)
+
+    # ── Equalization tab ──────────────────────────────────────
+
+    def on_tab_changed(self, index):
+        if index == 2 and self.manager.original_image is not None:
+            self.display_image(self.manager.original_image, self.window.edge_input_image)
+        elif index == 4:
+            if self.equalization_image is None and self.manager.original_image is not None:
+                self.equalization_image = self.manager.gray_image.copy()
+            if self.equalization_image is not None:
+                self.display_gray_image(self.equalization_image, self.window.equalization_input_image)
+                self._show_equalization_input_histogram(self.equalization_image)
+
+    def load_equalization_image(self):
+        path, _ = QFileDialog.getOpenFileName(self.window, "Select Image", "", "Images (*.png *.jpg *.bmp *.jpeg)")
+        if not path:
+            return
+        img = cv2.imread(path)
+        if img is None:
+            return
+        self.equalization_image = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) if img.ndim == 3 else img
+        self.display_gray_image(self.equalization_image, self.window.equalization_input_image)
+        self._show_equalization_input_histogram(self.equalization_image)
+        self.window.equalization_output_image.clear()
+        self._clear_layout(self.window.equalization_output_histogram)
+
+    def apply_equalization(self):
+        if self.equalization_image is None:
+            return
+        equalized = Histogram.equalize_gray(self.equalization_image)
+        self.display_gray_image(equalized, self.window.equalization_output_image)
+        hist_eq = Histogram.computeHistoGray(equalized)
+        self._set_canvas(self.window.equalization_output_histogram, [Histogram.plot_gray_histogram(hist_eq)])
