@@ -134,6 +134,9 @@ QSlider::handle:horizontal:hover {
          <property name="currentIndex">
           <number>0</number>
          </property>
+         <property name="usesScrollButtons">
+          <bool>false</bool>
+         </property>
          <widget class="QWidget" name="tab">
           <attribute name="title">
            <string>Input + Histogram</string>
@@ -397,26 +400,64 @@ QSlider::handle:horizontal:hover {
                </property>
               </spacer>
              </item>
+             <item>
+              <widget class="QPushButton" name="edge_btn_apply">
+               <property name="text">
+                <string>Apply Mask</string>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>120</width>
+                 <height>30</height>
+                </size>
+               </property>
+              </widget>
+             </item>
             </layout>
            </item>
            <item>
-            <layout class="QHBoxLayout" name="edge_imageLayout">
+            <widget class="QGroupBox" name="edge_input_group">
+             <property name="title">
+              <string>Input Image</string>
+             </property>
+             <layout class="QVBoxLayout" name="edge_input_layout">
+              <item>
+               <widget class="QLabel" name="edge_input_image">
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>300</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string>Double-click to load image</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="edge_resultsLayout">
              <item>
-              <widget class="QGroupBox" name="edge_input_group">
+              <widget class="QGroupBox" name="edge_magnitude_group">
                <property name="title">
-                <string>Input Image</string>
+                <string>Magnitude</string>
                </property>
-               <layout class="QVBoxLayout" name="edge_input_layout">
+               <layout class="QVBoxLayout" name="edge_magnitude_layout">
                 <item>
-                 <widget class="QLabel" name="edge_input_image">
+                 <widget class="QLabel" name="edge_output_image">
                   <property name="minimumSize">
                    <size>
-                    <width>400</width>
-                    <height>400</height>
+                    <width>0</width>
+                    <height>250</height>
                    </size>
                   </property>
                   <property name="text">
-                   <string>Double-click to load image</string>
+                   <string/>
                   </property>
                   <property name="alignment">
                    <set>Qt::AlignCenter</set>
@@ -427,17 +468,42 @@ QSlider::handle:horizontal:hover {
               </widget>
              </item>
              <item>
-              <widget class="QGroupBox" name="edge_output_group">
+              <widget class="QGroupBox" name="edge_grad_x_group">
                <property name="title">
-                <string>Edge Detection Result</string>
+                <string>Gradient X</string>
                </property>
-               <layout class="QVBoxLayout" name="edge_output_layout">
+               <layout class="QVBoxLayout" name="edge_grad_x_layout">
                 <item>
-                 <widget class="QLabel" name="edge_output_image">
+                 <widget class="QLabel" name="edge_gradient_x_image">
                   <property name="minimumSize">
                    <size>
-                    <width>400</width>
-                    <height>400</height>
+                    <width>0</width>
+                    <height>250</height>
+                   </size>
+                  </property>
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignCenter</set>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item>
+              <widget class="QGroupBox" name="edge_grad_y_group">
+               <property name="title">
+                <string>Gradient Y</string>
+               </property>
+               <layout class="QVBoxLayout" name="edge_grad_y_layout">
+                <item>
+                 <widget class="QLabel" name="edge_gradient_y_image">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>250</height>
                    </size>
                   </property>
                   <property name="text">
@@ -459,6 +525,134 @@ QSlider::handle:horizontal:hover {
           <attribute name="title">
            <string>Normalization</string>
           </attribute>
+          <layout class="QVBoxLayout" name="normalize_mainLayout">
+           <item>
+            <layout class="QHBoxLayout" name="normalize_controlsLayout">
+             <item>
+              <spacer name="normalize_spacer">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QPushButton" name="normalize_btn_apply">
+               <property name="text">
+                <string>Apply Normalization</string>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>150</width>
+                 <height>30</height>
+                </size>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="normalize_imageLayout">
+             <item>
+              <widget class="QGroupBox" name="normalize_input_group">
+               <property name="title">
+                <string>Original Image</string>
+               </property>
+               <layout class="QVBoxLayout" name="normalize_input_layout">
+                <item>
+                 <widget class="QLabel" name="normalize_input_image">
+                  <property name="minimumSize">
+                   <size>
+                    <width>350</width>
+                    <height>350</height>
+                   </size>
+                  </property>
+                  <property name="text">
+                   <string>Double-click to load image</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignCenter</set>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item>
+              <widget class="QGroupBox" name="normalize_output_group">
+               <property name="title">
+                <string>Normalized Image</string>
+               </property>
+               <layout class="QVBoxLayout" name="normalize_output_layout">
+                <item>
+                 <widget class="QLabel" name="normalize_output_image">
+                  <property name="minimumSize">
+                   <size>
+                    <width>350</width>
+                    <height>350</height>
+                   </size>
+                  </property>
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignCenter</set>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="normalize_histogramLayout">
+             <item>
+              <widget class="QGroupBox" name="normalize_input_hist_group">
+               <property name="title">
+                <string>Original Histogram</string>
+               </property>
+               <layout class="QVBoxLayout" name="normalize_input_hist_layout">
+                <item>
+                 <widget class="QWidget" name="normalize_input_histogram" native="true">
+                  <property name="minimumSize">
+                   <size>
+                    <width>350</width>
+                    <height>200</height>
+                   </size>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item>
+              <widget class="QGroupBox" name="normalize_output_hist_group">
+               <property name="title">
+                <string>Normalized Histogram</string>
+               </property>
+               <layout class="QVBoxLayout" name="normalize_output_hist_layout">
+                <item>
+                 <widget class="QWidget" name="normalize_output_histogram" native="true">
+                  <property name="minimumSize">
+                   <size>
+                    <width>350</width>
+                    <height>200</height>
+                   </size>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
          </widget>
          <widget class="QWidget" name="tab_6">
           <attribute name="title">

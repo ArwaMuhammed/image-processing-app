@@ -1,4 +1,6 @@
 import numpy as np
+from core.image_manager import ImageManager
+
 
 def apply_filter(image, filter_type):
     if filter_type == "Average (3x3)":
@@ -15,7 +17,8 @@ def apply_filter(image, filter_type):
 
 def average_filter(image):
     kernel = np.ones((3, 3)) / 9
-    return apply_convolution(image, kernel)
+    return ImageManager.convolve(image, kernel)
+
 
 def gaussian_filter(image):
     kernel = np.array([
@@ -23,29 +26,13 @@ def gaussian_filter(image):
         [2, 4, 2],
         [1, 2, 1]
     ]) / 16
-    return apply_convolution(image, kernel)
+    return ImageManager.convolve(image, kernel)
+
 
 def median_filter(image):
+    from numpy.lib.stride_tricks import sliding_window_view
     padded = np.pad(image, ((1, 1), (1, 1), (0, 0)), mode='edge')
-    output = np.zeros_like(image)
-
-    for i in range(image.shape[0]):
-        for j in range(image.shape[1]):
-            for c in range(image.shape[2]):
-                region = padded[i:i+3, j:j+3, c]
-                output[i, j, c] = np.median(region)
-
-    return output
-
-
-def apply_convolution(image, kernel):
-    padded = np.pad(image, ((1, 1), (1, 1), (0, 0)), mode='edge')
-    output = np.zeros_like(image)
-
-    for i in range(image.shape[0]):
-        for j in range(image.shape[1]):
-            for c in range(image.shape[2]):
-                region = padded[i:i+3, j:j+3, c]
-                output[i, j, c] = np.sum(region * kernel)
-
-    return np.clip(output, 0, 255).astype(np.uint8)
+    # windows shape: (H, W, C, 3, 3)
+    windows = sliding_window_view(padded, (3, 3), axis=(0, 1))
+    # median over the two kernel axes → shape (H, W, C)
+    return np.median(windows, axis=(-2, -1)).astype(np.uint8)
