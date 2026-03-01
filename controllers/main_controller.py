@@ -184,6 +184,9 @@ class MainController(QObject):
             if self.equalization_image is not None:
                 self.display_gray_image(self.equalization_image, self.window.equalization_input_image)
                 self._show_equalization_input_histogram(self.equalization_image)
+        elif index == 1:
+            if self.manager.original_image is not None:
+                self.display_image(self.manager.original_image, self.window.noise_input_image)
 
     def load_equalization_image(self):
         path, _ = QFileDialog.getOpenFileName(self.window, "Select Image", "", "Images (*.png *.jpg *.bmp *.jpeg)")
