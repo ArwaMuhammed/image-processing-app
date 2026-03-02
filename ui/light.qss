@@ -1,0 +1,95 @@
+QMainWindow {
+    background-color: #FFF5F7;
+}
+QWidget {
+    background-color: #FFF5F7;
+    color: #5A4A5D;
+}
+QPushButton {
+    background-color: #FFD6E0;
+    border: 2px solid #FFB3C6;
+    border-radius: 8px;
+    padding: 6px 12px;
+    color: #5A4A5D;
+    font-weight: bold;
+    min-height: 25px;
+}
+QPushButton:hover {
+    background-color: #FFE0E9;
+    border-color: #FF99B3;
+}
+QPushButton:pressed {
+    background-color: #FFB3C6;
+    font-size: 50px;
+}
+QGroupBox {
+    border: 2px solid #E6C9E6;
+    border-radius: 10px;
+    margin-top: 10px;
+    padding-top: 10px;
+    background-color: #FFFFFF;
+    font-weight: bold;
+    color: #7B5D7B;
+}
+QGroupBox::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top left;
+    padding: 5px 10px;
+    background-color: #F5E6F5;
+    border-radius: 5px;
+    color: #7B5D7B;
+    font-size: 50px;
+}
+QLabel {
+    color: #5A4A5D;
+    background-color: transparent;
+}
+QTabWidget::pane {
+    border: 2px solid #E6C9E6;
+    border-radius: 8px;
+    background-color: #FFFFFF;
+}
+QTabBar::tab {
+    background-color: #F5E6F5;
+    border: 2px solid #E6C9E6;
+    border-bottom: none;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    padding: 10px 25px;
+    margin-right: 2px;
+    color: #7B5D7B;
+    font-weight: bold;
+    min-width: 150px;
+}
+QTabBar::tab:selected {
+    background-color: #FFFFFF;
+    border-bottom: 2px solid #FFFFFF;
+}
+QTabBar::tab:hover {
+    background-color: #FFE0E9;
+}
+QComboBox {
+    background-color: #FFFFFF;
+    border: 2px solid #E6C9E6;
+    border-radius: 5px;
+    padding: 5px;
+    color: #5A4A5D;
+}
+QComboBox:hover {
+    border-color: #D4B3D4;
+}
+QSlider::groove:horizontal {
+    background: #E6C9E6;
+    height: 8px;
+    border-radius: 4px;
+}
+QSlider::handle:horizontal {
+    background: #FFB3C6;
+    border: 2px solid #FF99B3;
+    width: 18px;
+    margin: -5px 0;
+    border-radius: 9px;
+}
+QSlider::handle:horizontal:hover {
+    background: #FFD6E0;
+}

@@ -13,11 +13,19 @@ from PyQt5.QtWidgets import QFileDialog, QVBoxLayout
 from PyQt5.QtGui import QImage, QPixmap, QCursor
 from PyQt5.QtCore import Qt, QEvent, QObject
 import cv2
+import os
 from core.image_manager import ImageManager
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from core.histogram import Histogram
 from core.edges import sobel_edge_detection, prewitt_edge_detection, roberts_edge_detection, canny_edge_detection
 from core.normalize import normalize_image
+
+
+def load_stylesheet(filename):
+    """Load a .qss stylesheet file from the ui folder."""
+    path = os.path.join(os.path.dirname(__file__), '..', 'ui', filename)
+    with open(path, 'r', encoding='utf-8') as f:
+        return f.read()
 
 
 class MainController(QObject):
@@ -26,10 +34,12 @@ class MainController(QObject):
         self.window = window
         self.manager = ImageManager()
         self.equalization_image = None
+        self.is_dark = True
 
         # Input tab
         self.window.btn_reset.clicked.connect(self.reset_image)
         self.window.btn_convert_gray.clicked.connect(self.convert_to_gray)
+        self.window.btn_toggle_theme.clicked.connect(self.toggle_theme)
         self._setup_label(self.window.InputImage, dashed=True, clickable=True)
 
         # Edge detection tab
@@ -251,3 +261,12 @@ class MainController(QObject):
         elif index == 1:
             if self.manager.original_image is not None:
                 self.display_image(self.manager.original_image, self.window.noise_input_image)
+
+    def toggle_theme(self):
+        if self.is_dark:
+            self.window.setStyleSheet(load_stylesheet('light.qss'))
+            self.window.btn_toggle_theme.setText("🌙 Dark Mode")
+        else:
+            self.window.setStyleSheet(load_stylesheet('dark.qss'))
+            self.window.btn_toggle_theme.setText("☀ Light Mode")
+        self.is_dark = not self.is_dark

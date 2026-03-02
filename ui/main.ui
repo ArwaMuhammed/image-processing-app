@@ -140,10 +140,6 @@ QSlider::handle:horizontal {
 
 QSlider::handle:horizontal:hover {
     background: #9A7AA5;
-}
-
-QSlider::handle:horizontal:hover {
-    background: #FFD6E0;
 }</string>
   </property>
   <widget class="QWidget" name="centralwidget">
@@ -180,6 +176,11 @@ QSlider::handle:horizontal:hover {
              <item>
               <widget class="QPushButton" name="btn_convert_gray">
                <property name="text"><string>convert to gray</string></property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="btn_toggle_theme">
+               <property name="text"><string>☀ Light Mode</string></property>
               </widget>
              </item>
             </layout>
@@ -432,16 +433,16 @@ QSlider::handle:horizontal:hover {
               </widget>
              </item>
              <item>
-              <spacer name="edge_spacer">
-               <property name="orientation"><enum>Qt::Horizontal</enum></property>
-               <property name="sizeHint" stdset="0"><size><width>40</width><height>20</height></size></property>
-              </spacer>
-             </item>
-             <item>
               <widget class="QPushButton" name="edge_btn_apply">
                <property name="text"><string>Apply Mask</string></property>
                <property name="minimumSize"><size><width>120</width><height>30</height></size></property>
               </widget>
+             </item>
+             <item>
+              <spacer name="edge_spacer">
+               <property name="orientation"><enum>Qt::Horizontal</enum></property>
+               <property name="sizeHint" stdset="0"><size><width>40</width><height>20</height></size></property>
+              </spacer>
              </item>
             </layout>
            </item>
