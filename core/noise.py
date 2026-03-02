@@ -1,6 +1,4 @@
 import numpy as np
-import cv2
-
 
 def add_noise(image, noise_type, amount):
     if noise_type == "Gaussian":

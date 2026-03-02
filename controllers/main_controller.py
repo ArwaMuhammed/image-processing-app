@@ -1,3 +1,14 @@
+"""
+Handles:
+- Input tab (loading, reset, grayscale)
+- Histogram display
+- Edge detection tab
+- Normalization & equalization tab
+
+Separate controllers exist for:
+- Noise tab
+- Hybrid images tab
+"""
 from PyQt5.QtWidgets import QFileDialog, QVBoxLayout
 from PyQt5.QtGui import QImage, QPixmap, QCursor
 from PyQt5.QtCore import Qt, QEvent, QObject
