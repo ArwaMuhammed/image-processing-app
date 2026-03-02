@@ -36,6 +36,7 @@ QPushButton:hover {
 }
 QPushButton:pressed {
     background-color: #FFB3C6;
+    font-size: 50px;
 }
 QGroupBox {
     border: 2px solid #E6C9E6;
@@ -53,6 +54,7 @@ QGroupBox::title {
     background-color: #F5E6F5;
     border-radius: 5px;
     color: #7B5D7B;
+    font-size: 50px;
 }
 QLabel {
     color: #5A4A5D;
@@ -163,7 +165,7 @@ QSlider::handle:horizontal:hover {
              </item>
              <item>
               <widget class="QGroupBox" name="groupBox_4">
-               <property name="title"><string>RGB Histogram</string></property>
+               <property name="title"><string>Histogram</string></property>
                <layout class="QVBoxLayout" name="inputHistogramLayout">
                 <item><widget class="QWidget" name="InputHistogram" native="true"/></item>
                </layout>
@@ -171,7 +173,7 @@ QSlider::handle:horizontal:hover {
              </item>
              <item>
               <widget class="QGroupBox" name="groupBox_5">
-               <property name="title"><string>RGB CDF</string></property>
+               <property name="title"><string>CDF</string></property>
                <layout class="QVBoxLayout" name="inputDistributionLayout">
                 <item><widget class="QWidget" name="InputDistribution" native="true"/></item>
                </layout>
@@ -330,35 +332,21 @@ QSlider::handle:horizontal:hover {
           </layout>
          </widget>
 
-         <!-- ═══ TAB 4: Normalization ═══ -->
+         <!-- ═══ TAB 4: Normalization & Equalization ═══ -->
          <widget class="QWidget" name="tab_5">
-          <attribute name="title"><string>Normalization</string></attribute>
-          <layout class="QVBoxLayout" name="normalize_mainLayout">
+          <attribute name="title"><string>Norm + Equalize</string></attribute>
+          <layout class="QVBoxLayout" name="normeq_mainLayout">
+           
+           <!-- ROW 1: Original Image + Histogram -->
            <item>
-            <layout class="QHBoxLayout" name="normalize_controlsLayout">
+            <layout class="QHBoxLayout" name="normeq_originalLayout">
              <item>
-              <spacer name="normalize_spacer">
-               <property name="orientation"><enum>Qt::Horizontal</enum></property>
-               <property name="sizeHint" stdset="0"><size><width>40</width><height>20</height></size></property>
-              </spacer>
-             </item>
-             <item>
-              <widget class="QPushButton" name="normalize_btn_apply">
-               <property name="text"><string>Apply Normalization</string></property>
-               <property name="minimumSize"><size><width>150</width><height>30</height></size></property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="normalize_imageLayout">
-             <item>
-              <widget class="QGroupBox" name="normalize_input_group">
-               <property name="title"><string>Original Image</string></property>
-               <layout class="QVBoxLayout" name="normalize_input_layout">
+              <widget class="QGroupBox" name="normeq_input_group">
+               <property name="title"><string>Original Image (double-click to load)</string></property>
+               <layout class="QVBoxLayout" name="normeq_input_layout">
                 <item>
                  <widget class="QLabel" name="normalize_input_image">
-                  <property name="minimumSize"><size><width>350</width><height>350</height></size></property>
+                  <property name="minimumSize"><size><width>300</width><height>250</height></size></property>
                   <property name="text"><string>Double-click to load image</string></property>
                   <property name="alignment"><set>Qt::AlignCenter</set></property>
                  </widget>
@@ -367,14 +355,12 @@ QSlider::handle:horizontal:hover {
               </widget>
              </item>
              <item>
-              <widget class="QGroupBox" name="normalize_output_group">
-               <property name="title"><string>Normalized Image</string></property>
-               <layout class="QVBoxLayout" name="normalize_output_layout">
+              <widget class="QGroupBox" name="normeq_input_hist_group">
+               <property name="title"><string>Original Histogram</string></property>
+               <layout class="QVBoxLayout" name="normeq_input_hist_layout">
                 <item>
-                 <widget class="QLabel" name="normalize_output_image">
-                  <property name="minimumSize"><size><width>350</width><height>350</height></size></property>
-                  <property name="text"><string/></property>
-                  <property name="alignment"><set>Qt::AlignCenter</set></property>
+                 <widget class="QWidget" name="normalize_input_histogram" native="true">
+                  <property name="minimumSize"><size><width>300</width><height>250</height></size></property>
                  </widget>
                 </item>
                </layout>
@@ -382,15 +368,19 @@ QSlider::handle:horizontal:hover {
              </item>
             </layout>
            </item>
+
+           <!-- ROW 2: Normalized Image + Histogram -->
            <item>
-            <layout class="QHBoxLayout" name="normalize_histogramLayout">
+            <layout class="QHBoxLayout" name="normeq_normalizedLayout">
              <item>
-              <widget class="QGroupBox" name="normalize_input_hist_group">
-               <property name="title"><string>Original Histogram</string></property>
-               <layout class="QVBoxLayout" name="normalize_input_hist_layout">
+              <widget class="QGroupBox" name="normalize_output_group">
+               <property name="title"><string>Normalized Image</string></property>
+               <layout class="QVBoxLayout" name="normalize_output_layout">
                 <item>
-                 <widget class="QWidget" name="normalize_input_histogram" native="true">
-                  <property name="minimumSize"><size><width>350</width><height>200</height></size></property>
+                 <widget class="QLabel" name="normalize_output_image">
+                  <property name="minimumSize"><size><width>300</width><height>250</height></size></property>
+                  <property name="text"><string/></property>
+                  <property name="alignment"><set>Qt::AlignCenter</set></property>
                  </widget>
                 </item>
                </layout>
@@ -402,7 +392,7 @@ QSlider::handle:horizontal:hover {
                <layout class="QVBoxLayout" name="normalize_output_hist_layout">
                 <item>
                  <widget class="QWidget" name="normalize_output_histogram" native="true">
-                  <property name="minimumSize"><size><width>350</width><height>200</height></size></property>
+                  <property name="minimumSize"><size><width>300</width><height>250</height></size></property>
                  </widget>
                 </item>
                </layout>
@@ -410,70 +400,19 @@ QSlider::handle:horizontal:hover {
              </item>
             </layout>
            </item>
-          </layout>
-         </widget>
 
-         <!-- ═══ TAB 5: Equalization ═══ -->
-         <widget class="QWidget" name="tab_6">
-          <attribute name="title"><string>Equalization</string></attribute>
-          <layout class="QVBoxLayout" name="equalization_mainLayout">
+           <!-- ROW 3: Equalized Image + Histogram -->
            <item>
-            <layout class="QHBoxLayout" name="equalization_controlsLayout">
-             <item>
-              <spacer name="equalization_spacer">
-               <property name="orientation"><enum>Qt::Horizontal</enum></property>
-               <property name="sizeHint" stdset="0"><size><width>40</width><height>20</height></size></property>
-              </spacer>
-             </item>
-             <item>
-              <widget class="QPushButton" name="equalization_btn_apply">
-               <property name="text"><string>Apply Equalization</string></property>
-               <property name="minimumSize"><size><width>150</width><height>30</height></size></property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="equalization_imageLayout">
-             <item>
-              <widget class="QGroupBox" name="equalization_input_group">
-               <property name="title"><string>Original Image</string></property>
-               <layout class="QVBoxLayout" name="equalization_input_layout">
-                <item>
-                 <widget class="QLabel" name="equalization_input_image">
-                  <property name="minimumSize"><size><width>350</width><height>350</height></size></property>
-                  <property name="text"><string>Double-click to load image</string></property>
-                  <property name="alignment"><set>Qt::AlignCenter</set></property>
-                 </widget>
-                </item>
-               </layout>
-              </widget>
-             </item>
+            <layout class="QHBoxLayout" name="normeq_equalizedLayout">
              <item>
               <widget class="QGroupBox" name="equalization_output_group">
                <property name="title"><string>Equalized Image</string></property>
                <layout class="QVBoxLayout" name="equalization_output_layout">
                 <item>
                  <widget class="QLabel" name="equalization_output_image">
-                  <property name="minimumSize"><size><width>350</width><height>350</height></size></property>
+                  <property name="minimumSize"><size><width>300</width><height>250</height></size></property>
                   <property name="text"><string/></property>
                   <property name="alignment"><set>Qt::AlignCenter</set></property>
-                 </widget>
-                </item>
-               </layout>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="equalization_histogramLayout">
-             <item>
-              <widget class="QGroupBox" name="equalization_input_hist_group">
-               <property name="title"><string>Original Histogram</string></property>
-               <layout class="QVBoxLayout" name="equalization_input_hist_layout">
-                <item>
-                 <widget class="QWidget" name="equalization_input_histogram" native="true">
-                  <property name="minimumSize"><size><width>350</width><height>200</height></size></property>
                  </widget>
                 </item>
                </layout>
@@ -485,7 +424,7 @@ QSlider::handle:horizontal:hover {
                <layout class="QVBoxLayout" name="equalization_output_hist_layout">
                 <item>
                  <widget class="QWidget" name="equalization_output_histogram" native="true">
-                  <property name="minimumSize"><size><width>350</width><height>200</height></size></property>
+                  <property name="minimumSize"><size><width>300</width><height>250</height></size></property>
                  </widget>
                 </item>
                </layout>
@@ -493,6 +432,7 @@ QSlider::handle:horizontal:hover {
              </item>
             </layout>
            </item>
+
           </layout>
          </widget>
 
@@ -507,7 +447,7 @@ QSlider::handle:horizontal:hover {
 
              <item>
               <widget class="QGroupBox" name="hybrid_groupBox_img1">
-               <property name="title"><string>Image 1  (double-click to load)</string></property>
+               <property name="title"><string>Image 1</string></property>
                <property name="minimumSize"><size><width>0</width><height>220</height></size></property>
                <layout class="QVBoxLayout" name="hybrid_img1Layout">
                 <item>
@@ -522,7 +462,7 @@ QSlider::handle:horizontal:hover {
 
              <item>
               <widget class="QGroupBox" name="hybrid_groupBox_img2">
-               <property name="title"><string>Image 2  (double-click to load)</string></property>
+               <property name="title"><string>Image 2</string></property>
                <property name="minimumSize"><size><width>0</width><height>220</height></size></property>
                <layout class="QVBoxLayout" name="hybrid_img2Layout">
                 <item>

@@ -54,7 +54,7 @@ class HybridController(QObject):
 
     def load_image(self, slot: int):
         path, _ = QFileDialog.getOpenFileName(
-            self.window, "Select Image", "", "Images (*.png *.jpg *.bmp)"
+            self.window, "Select Image", "", "Images (*.png *.jpg *.bmp *.jpeg)"
         )
         if not path:
             return

@@ -2,7 +2,6 @@ from PyQt5.QtWidgets import QFileDialog, QVBoxLayout
 from PyQt5.QtGui import QImage, QPixmap, QCursor
 from PyQt5.QtCore import Qt, QEvent, QObject
 import cv2
-import numpy as np
 from core.image_manager import ImageManager
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from core.histogram import Histogram
@@ -25,13 +24,8 @@ class MainController(QObject):
         # Edge detection tab
         self.setup_edge_detection_tab()
 
-        # Normalization tab
-        self.setup_normalization_tab()
-
-        # Equalization tab
-        self._setup_label(self.window.equalization_input_image, dashed=True, clickable=True)
-        self._setup_label(self.window.equalization_output_image)
-        self.window.equalization_btn_apply.clicked.connect(self.apply_equalization)
+        # Normalization & Equalization combined tab
+        self.setup_normalization_equalization_tab()
 
         self.window.tabWidget.currentChanged.connect(self.on_tab_changed)
 
@@ -94,24 +88,20 @@ class MainController(QObject):
         self._set_canvas(self.window.InputHistogram,    [Histogram.plot_gray_histogram(hist)])
         self._set_canvas(self.window.InputDistribution, [Histogram.plot_cdf_gray(cdf)])
 
-    def _show_equalization_input_histogram(self, gray_image):
-        hist = Histogram.computeHistoGray(gray_image)
-        self._set_canvas(self.window.equalization_input_histogram, [Histogram.plot_gray_histogram(hist)])
-
     # ── Event filter ───────────────────────────────────────────
 
     def eventFilter(self, obj, event):
         if event.type() == QEvent.MouseButtonDblClick and event.button() == Qt.LeftButton:
             if obj == self.window.InputImage:
                 self.load_image(); return True
-            if obj == self.window.equalization_input_image:
-                self.load_equalization_image(); return True
+            if obj == self.window.normalize_input_image:
+                self.load_normalize_equalize_image(); return True
         return False
 
     # ── Input tab ─────────────────────────────────────────────
 
     def load_image(self):
-        path, _ = QFileDialog.getOpenFileName(self.window, "Select Image", "", "Images (*.png *.jpg *.bmp)")
+        path, _ = QFileDialog.getOpenFileName(self.window, "Select Image", "", "Images (*.png *.jpg *.bmp *.jpeg)")
         if not path:
             return
         self.manager.read_image(path)
@@ -186,54 +176,17 @@ class MainController(QObject):
             self.window.edge_gradient_x_image.clear()
             self.window.edge_gradient_y_image.clear()
 
-    # ── Normalization tab ─────────────────────────────────────
+    # ── Normalization & Equalization combined tab ─────────────
 
-    def setup_normalization_tab(self):
-        for label in (self.window.normalize_input_image, self.window.normalize_output_image):
+    def setup_normalization_equalization_tab(self):
+        # Setup labels
+        self._setup_label(self.window.normalize_input_image, dashed=True, clickable=True)
+        for label in (self.window.normalize_output_image, self.window.equalization_output_image):
             label.setStyleSheet("QLabel { border: 2px solid #aaa; background-color: #f5f5f5; }")
             label.setScaledContents(False)
             label.setAlignment(Qt.AlignCenter)
-        self.window.normalize_btn_apply.clicked.connect(self.apply_normalization)
 
-    def _refresh_normalize_input(self):
-        gray = self.manager.gray_image
-        if gray is None:
-            return
-        self.display_gray_image(gray, self.window.normalize_input_image)
-        hist = Histogram.computeHistoGray(gray)
-        self._set_canvas(self.window.normalize_input_histogram, [Histogram.plot_gray_histogram(hist)])
-        self.window.normalize_output_image.clear()
-        self._clear_layout(self.window.normalize_output_histogram)
-
-    def apply_normalization(self):
-        gray = self.manager.gray_image
-        if gray is None:
-            return
-        normalized = normalize_image(gray)
-        self.display_gray_image(normalized, self.window.normalize_output_image)
-        hist = Histogram.computeHistoGray(normalized)
-        self._set_canvas(self.window.normalize_output_histogram, [Histogram.plot_gray_histogram(hist)])
-
-    # ── Equalization tab ──────────────────────────────────────
-
-    def on_tab_changed(self, index):
-        if index == 2 and self.manager.original_image is not None:
-            self.display_image(self.manager.original_image, self.window.edge_input_image)
-        elif index == 3:
-            self._refresh_normalize_input()
-        elif index == 4:
-            if self.equalization_image is None and self.manager.original_image is not None:
-                self.equalization_image = self.manager.gray_image.copy()
-            if self.equalization_image is not None:
-                self.display_gray_image(self.equalization_image, self.window.equalization_input_image)
-                self._show_equalization_input_histogram(self.equalization_image)
-                self.window.equalization_output_image.clear()
-                self._clear_layout(self.window.equalization_output_histogram)
-        elif index == 1:
-            if self.manager.original_image is not None:
-                self.display_image(self.manager.original_image, self.window.noise_input_image)
-
-    def load_equalization_image(self):
+    def load_normalize_equalize_image(self):
         path, _ = QFileDialog.getOpenFileName(self.window, "Select Image", "", "Images (*.png *.jpg *.bmp *.jpeg)")
         if not path:
             return
@@ -241,15 +194,49 @@ class MainController(QObject):
         if img is None:
             return
         self.equalization_image = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) if img.ndim == 3 else img
-        self.display_gray_image(self.equalization_image, self.window.equalization_input_image)
-        self._show_equalization_input_histogram(self.equalization_image)
-        self.window.equalization_output_image.clear()
-        self._clear_layout(self.window.equalization_output_histogram)
+        self.manager.gray_image = self.equalization_image
+        self._refresh_normalize_equalize_input()
+
+    def _refresh_normalize_equalize_input(self):
+        gray = self.equalization_image if self.equalization_image is not None else self.manager.gray_image
+        if gray is None:
+            return
+        # Display original
+        self.display_gray_image(gray, self.window.normalize_input_image)
+        hist = Histogram.computeHistoGray(gray)
+        self._set_canvas(self.window.normalize_input_histogram, [Histogram.plot_gray_histogram(hist)])
+        
+        # Automatically apply normalization
+        self.apply_normalization()
+        
+        # Automatically apply equalization
+        self.apply_equalization()
+
+    def apply_normalization(self):
+        gray = self.equalization_image if self.equalization_image is not None else self.manager.gray_image
+        if gray is None:
+            return
+        normalized = normalize_image(gray)
+        self.display_gray_image(normalized, self.window.normalize_output_image)
+        hist = Histogram.computeHistoGray(normalized)
+        self._set_canvas(self.window.normalize_output_histogram, [Histogram.plot_gray_histogram(hist)])
 
     def apply_equalization(self):
-        if self.equalization_image is None:
+        gray = self.equalization_image if self.equalization_image is not None else self.manager.gray_image
+        if gray is None:
             return
-        equalized = Histogram.equalize_gray(self.equalization_image)
+        equalized = Histogram.equalize_gray(gray)
         self.display_gray_image(equalized, self.window.equalization_output_image)
         hist_eq = Histogram.computeHistoGray(equalized)
         self._set_canvas(self.window.equalization_output_histogram, [Histogram.plot_gray_histogram(hist_eq)])
+
+    def on_tab_changed(self, index):
+        if index == 2 and self.manager.original_image is not None:
+            self.display_image(self.manager.original_image, self.window.edge_input_image)
+        elif index == 3:  # Normalization & Equalization tab
+            if self.equalization_image is None and self.manager.original_image is not None:
+                self.equalization_image = self.manager.gray_image.copy()
+            self._refresh_normalize_equalize_input()
+        elif index == 1:
+            if self.manager.original_image is not None:
+                self.display_image(self.manager.original_image, self.window.noise_input_image)
