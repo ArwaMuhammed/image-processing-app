@@ -1,7 +1,7 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QMainWindow
 from PyQt5 import uic
-from controllers.main_controller import MainController
+from controllers.main_controller import MainController, load_stylesheet
 from controllers.hybrid_controller import HybridController
 from controllers.noise_controller import NoiseController
 
@@ -11,6 +11,7 @@ if __name__ == "__main__":
 
     window = QMainWindow()
     uic.loadUi("ui/main.ui", window)
+    window.setStyleSheet(load_stylesheet('dark.qss'))
 
     controller = MainController(window)
     hybrid_controller = HybridController(window)
