@@ -146,18 +146,13 @@ class MainController(QObject):
 
     def setup_edge_detection_tab(self):
         """Setup edge detection tab with combo box and labels"""
-        # Setup edge input image label
-        self.window.edge_input_image.setStyleSheet("QLabel { border: 2px solid #aaa; background-color: #f5f5f5; }")
-        self.window.edge_input_image.setScaledContents(False)
-        self.window.edge_input_image.setAlignment(Qt.AlignCenter)
 
-        # Setup all three edge output labels
-        for label in (self.window.edge_output_image,
+        # Setup input and all three edge output labels
+        for label in (self.window.edge_input_image,
+                      self.window.edge_output_image,
                       self.window.edge_gradient_x_image,
                       self.window.edge_gradient_y_image):
-            label.setStyleSheet("QLabel { border: 2px solid #aaa; background-color: #f5f5f5; }")
-            label.setScaledContents(False)
-            label.setAlignment(Qt.AlignCenter)
+            self._setup_label(label)
 
         # Populate combo box with edge detection options
         self.window.edge_combo.addItems(["Sobel", "Prewitt", "Roberts", "Canny"])
@@ -200,9 +195,7 @@ class MainController(QObject):
         # Setup labels
         self._setup_label(self.window.normalize_input_image, dashed=True, clickable=True)
         for label in (self.window.normalize_output_image, self.window.equalization_output_image):
-            label.setStyleSheet("QLabel { border: 2px solid #aaa; background-color: #f5f5f5; }")
-            label.setScaledContents(False)
-            label.setAlignment(Qt.AlignCenter)
+            self._setup_label(label)
 
     def load_normalize_equalize_image(self):
         path, _ = QFileDialog.getOpenFileName(self.window, "Select Image", "", "Images (*.png *.jpg *.bmp *.jpeg)")
