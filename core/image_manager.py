@@ -13,23 +13,23 @@ class ImageManager:
     def convolve(image: np.ndarray, kernel: np.ndarray) -> np.ndarray:
         k_h, k_w = kernel.shape
         pad_h, pad_w = k_h // 2, k_w // 2
-        flipped = np.flipud(np.fliplr(kernel))
+        flipped = np.flipud(np.fliplr(kernel))   # flip for convolution
 
+        # gray image
         if image.ndim == 2:
-            print("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
             padded = np.pad(image.astype(np.float64),
                             ((pad_h, pad_h), (pad_w, pad_w)), mode='constant')
             windows = sliding_window_view(padded, (k_h, k_w))
             return np.einsum('ijkl,kl->ij', windows, flipped)
+        # colored image
         else:
             out = np.zeros(image.shape, dtype=np.float64)
-            print("dddddddddddddddddddddddddddddddddddddddddddddddddd")
             for c in range(image.shape[2]):
                 padded = np.pad(image[:, :, c].astype(np.float64),
                                 ((pad_h, pad_h), (pad_w, pad_w)), mode='edge')
                 windows = sliding_window_view(padded, (k_h, k_w))
                 out[:, :, c] = np.einsum('ijkl,kl->ij', windows, flipped)
-            return np.clip(out, 0, 255).astype(np.uint8)
+            return np.clip(out, 0, 255).astype(np.uint8)  # clipping is better for colored images
 
     def read_image(self, path):
         image = cv2.imread(path)
