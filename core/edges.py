@@ -9,14 +9,14 @@ def sobel_edge_detection(image: np.ndarray) -> tuple[np.ndarray, np.ndarray, np.
     image = image.astype(np.float64)
     
     # Sobel kernels
-    # Kernel for detecting horizontal edges (gradient in x direction)
+    # Kernel for detecting vertical edges (gradient in x direction)
     sobel_x = np.array([
         [-1, 0, 1],
         [-2, 0, 2],
         [-1, 0, 1]
     ], dtype=np.float64)
     
-    # Kernel for detecting vertical edges (gradient in y direction)
+    # Kernel for detecting horizontal edges (gradient in y direction)
     sobel_y = np.array([
         [-1, -2, -1],
         [ 0,  0,  0],
@@ -29,9 +29,6 @@ def sobel_edge_detection(image: np.ndarray) -> tuple[np.ndarray, np.ndarray, np.
     
     # Calculate gradient magnitude
     gradient_magnitude = np.sqrt(gradient_x**2 + gradient_y**2)
-    
-    # Normalize to 0-255 range
-    gradient_magnitude = (gradient_magnitude / gradient_magnitude.max() * 255).astype(np.uint8)
     
     return gradient_magnitude, gradient_x, gradient_y
 
@@ -47,14 +44,14 @@ def prewitt_edge_detection(image: np.ndarray) -> tuple[np.ndarray, np.ndarray, n
     image = image.astype(np.float64)
     
     # Prewitt kernels (3x3)
-    # Kernel for horizontal edges (gradient in x direction)
+    # Kernel for vertical edges (gradient in x direction)
     prewitt_x = np.array([
         [-1, 0, 1],
         [-1, 0, 1],
         [-1, 0, 1]
     ], dtype=np.float64)
     
-    # Kernel for vertical edges (gradient in y direction)
+    # Kernel for horizontal edges (gradient in y direction)
     prewitt_y = np.array([
         [-1, -1, -1],
         [ 0,  0,  0],
@@ -68,11 +65,6 @@ def prewitt_edge_detection(image: np.ndarray) -> tuple[np.ndarray, np.ndarray, n
     # Calculate gradient magnitude
     gradient_magnitude = np.sqrt(gradient_x**2 + gradient_y**2)
     
-    # Normalize to 0-255 range
-    if gradient_magnitude.max() > 0:
-        gradient_magnitude = (gradient_magnitude / gradient_magnitude.max() * 255).astype(np.uint8)
-    else:
-        gradient_magnitude = gradient_magnitude.astype(np.uint8)
     
     return gradient_magnitude, gradient_x, gradient_y
 
@@ -100,11 +92,5 @@ def roberts_edge_detection(image: np.ndarray) -> tuple[np.ndarray, np.ndarray, n
     
     # Calculate gradient magnitude
     gradient_magnitude = np.sqrt(gradient_x**2 + gradient_y**2)
-    
-    # Normalize to 0-255 range
-    if gradient_magnitude.max() > 0:
-        gradient_magnitude = (gradient_magnitude / gradient_magnitude.max() * 255).astype(np.uint8)
-    else:
-        gradient_magnitude = gradient_magnitude.astype(np.uint8)
     
     return gradient_magnitude, gradient_x, gradient_y

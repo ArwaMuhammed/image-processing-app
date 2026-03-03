@@ -185,7 +185,7 @@ class MainController(QObject):
         else:
             return
 
-        self.display_gray_image(edges, self.window.edge_output_image)
+        self.display_gray_image(normalize_image(edges), self.window.edge_output_image)
 
         if grad_x is not None and grad_y is not None:
             self.display_gray_image(normalize_image(grad_x), self.window.edge_gradient_x_image)

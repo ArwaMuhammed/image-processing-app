@@ -1,18 +1,18 @@
 import numpy as np
-import cv2
-
 
 def normalize_image(image: np.ndarray) -> np.ndarray:
-   
-    image = image.astype(np.float64)
 
-    if image.ndim == 2:
-        # Grayscale
-        normalized = cv2.normalize(image, None, 0, 255, cv2.NORM_MINMAX)
-    else:
-        # Colour: normalize each channel independently
-        normalized = np.zeros_like(image)
-        for c in range(image.shape[2]):
-            normalized[:, :, c] = cv2.normalize(image[:, :, c], None, 0, 255, cv2.NORM_MINMAX)
-
+    img = image.astype(np.float64)
+    
+    # Find min and max values
+    min_val = img.min()
+    max_val = img.max()
+    
+    # Avoid division by zero if image is flat
+    if max_val == min_val:
+        return np.zeros_like(image, dtype=np.uint8) # returns a black image
+    
+    # Scale to 0-255 range: (pixel - min) / (max - min) * 255
+    normalized = (img - min_val) / (max_val - min_val) * 255
+    
     return normalized.astype(np.uint8)

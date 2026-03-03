@@ -16,12 +16,14 @@ class ImageManager:
         flipped = np.flipud(np.fliplr(kernel))
 
         if image.ndim == 2:
+            print("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
             padded = np.pad(image.astype(np.float64),
                             ((pad_h, pad_h), (pad_w, pad_w)), mode='constant')
             windows = sliding_window_view(padded, (k_h, k_w))
             return np.einsum('ijkl,kl->ij', windows, flipped)
         else:
             out = np.zeros(image.shape, dtype=np.float64)
+            print("dddddddddddddddddddddddddddddddddddddddddddddddddd")
             for c in range(image.shape[2]):
                 padded = np.pad(image[:, :, c].astype(np.float64),
                                 ((pad_h, pad_h), (pad_w, pad_w)), mode='edge')
