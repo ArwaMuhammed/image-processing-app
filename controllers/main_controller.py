@@ -1,14 +1,3 @@
-"""
-Handles:
-- Input tab (loading, reset, grayscale)
-- Histogram display
-- Edge detection tab
-- Normalization & equalization tab
-
-Separate controllers exist for:
-- Noise tab
-- Hybrid images tab
-"""
 from PyQt5.QtWidgets import QFileDialog, QVBoxLayout
 from PyQt5.QtGui import QImage, QPixmap, QCursor
 from PyQt5.QtCore import Qt, QEvent, QObject
@@ -129,13 +118,21 @@ class MainController(QObject):
         self.display_image(self.manager.current_image, self.window.InputImage)
         self._show_rgb_histograms(self.manager.original_image)
         self.equalization_image = self.manager.gray_image.copy()
+        
+        # Clear edge detection outputs
+        self.window.edge_output_image.clear()
+        self.window.edge_gradient_x_image.clear()
+        self.window.edge_gradient_y_image.clear()
+        
+        # Clear noise outputs
+        self.window.noise_noisy_image.clear()
+        self.window.noise_filtered_image.clear()
 
     def reset_image(self):
         img = self.manager.reset_image()
         if img is not None:
             self.display_image(img, self.window.InputImage)
             self._show_rgb_histograms(self.manager.original_image)
-            self.equalization_image = self.manager.gray_image.copy()
 
     def convert_to_gray(self):
         if self.manager.gray_image is None:
@@ -215,7 +212,6 @@ class MainController(QObject):
         if img is None:
             return
         self.equalization_image = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) if img.ndim == 3 else img
-        self.manager.gray_image = self.equalization_image
         self._refresh_normalize_equalize_input()
 
     def _refresh_normalize_equalize_input(self):
@@ -265,8 +261,8 @@ class MainController(QObject):
     def toggle_theme(self):
         if self.is_dark:
             self.window.setStyleSheet(load_stylesheet('light.qss'))
-            self.window.btn_toggle_theme.setText("🌙 Dark Mode")
+            self.window.btn_toggle_theme.setText("🌙")
         else:
             self.window.setStyleSheet(load_stylesheet('dark.qss'))
-            self.window.btn_toggle_theme.setText("☀ Light Mode")
+            self.window.btn_toggle_theme.setText("🔆")
         self.is_dark = not self.is_dark

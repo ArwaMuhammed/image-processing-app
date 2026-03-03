@@ -13,6 +13,8 @@ QPushButton {
     color: #5A4A5D;
     font-weight: bold;
     min-height: 25px;
+    font-size: 18px;
+
 }
 QPushButton:hover {
     background-color: #FFE0E9;
@@ -20,7 +22,13 @@ QPushButton:hover {
 }
 QPushButton:pressed {
     background-color: #FFB3C6;
-    font-size: 50px;
+}
+QPushButton#btn_toggle_theme {
+    font-size: 25px;
+    min-width: 40px;
+    min-height: 40px;
+    border-radius: 30px;
+    padding: 8px;
 }
 QGroupBox {
     border: 2px solid #E6C9E6;
@@ -38,7 +46,7 @@ QGroupBox::title {
     background-color: #F5E6F5;
     border-radius: 5px;
     color: #7B5D7B;
-    font-size: 50px;
+    font-size: 14px;
 }
 QLabel {
     color: #5A4A5D;

@@ -21,7 +21,13 @@ QPushButton:hover {
 }
 QPushButton:pressed {
     background-color: #5A4465;
-    font-size: 50px;
+}
+QPushButton#btn_toggle_theme {
+    font-size: 25px;
+    min-width: 40px;
+    min-height: 40px;
+    border-radius: 30px;
+    padding: 8px;
 }
 QGroupBox {
     border: 2px solid #5A4465;
@@ -39,7 +45,7 @@ QGroupBox::title {
     background-color: #3D2E47;
     border-radius: 5px;
     color: #E0D4E8;
-    font-size: 50px;
+    font-size: 14px;
 }
 QLabel {
     color: #E0E0E0;

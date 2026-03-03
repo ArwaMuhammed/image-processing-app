@@ -1,5 +1,3 @@
-from PyQt5.QtGui import QImage, QPixmap
-from PyQt5.QtCore import Qt
 from controllers.main_controller import MainController
 
 
